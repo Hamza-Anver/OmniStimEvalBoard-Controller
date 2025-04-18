@@ -1,1 +1,4 @@
-nicegui
+# Frozen requirements at development time April 2025
+nicegui==2.15.0
+numpy==2.2.4
+plotly==6.0.1
