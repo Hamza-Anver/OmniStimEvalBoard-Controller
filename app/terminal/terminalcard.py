@@ -29,13 +29,8 @@ class Terminal:
         self.buffer: List[str] = []
         self.max_buffer_size = 1000
 
-
-        # Register line callback
-        self.com.register_callback(self._on_serial_line)
-
         # Schedule periodic tasks
         ui.timer(1.0, self._refresh_ports)
-        ui.timer(0.01, self.com.read_serial)
 
     def _serial_options(self):
         with self.ui.row().classes(
@@ -74,7 +69,7 @@ class Terminal:
     def _terminal_area(self):
         # terminal output area
         self.terminal_area = ui.scroll_area().classes(
-            "font-mono border-gray-500 border-2 rounded-md bg-black text-white p-0 h-96 overflow-y-auto overflow-x-hidden"
+            "font-mono border-gray-500 border-2 rounded-md bg-black text-white p-0 h-96 overflow-y-scroll overflow-x-hidden"
         )
 
     def _serial_send_controls(self):
@@ -116,13 +111,36 @@ class Terminal:
         ui.notification("Disconnected", color="green", duration=3)
 
     def _refresh_ports(self):
+        if not self.port_select:
+            return
+        
+        # Refresh the list of available ports
         current = self.com.list_ports()
+        
+        # Check if there are any differences in the lists
+        if set(current) == set(self.port_select.options):
+            return
+        
+        # Notify port additions and removals
+        added = [p for p in current if p not in self.port_select.options]
+        removed = [p for p in self.port_select.options if p not in current]
+        if added:
+            ui.notification(f"Added ports: {', '.join(added)}", color="green", duration=3)
+        if removed:
+            ui.notification(f"Removed ports: {', '.join(removed)}", color="red", duration=3)
+        
         self.port_select.options = current
         if self.port_select.value not in current:
             self.port_select.value = None
 
-    def _on_serial_line(self, raw: str):
-        # optionally timestamp
+        self.port_select.update()
+
+    def parse_serial_line(self, raw: str):
+        # If disconnected then set UI appropriately
+        if raw == "DISCONNECTED":
+            return
+        
+        #Optional timestamp
         if self.timestamp_checkbox.value:
             ts = time.strftime("%H:%M:%S", time.localtime())
             line = f"[{ts}] {raw}"

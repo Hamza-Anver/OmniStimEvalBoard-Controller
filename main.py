@@ -9,7 +9,11 @@ ui.page_title("OmniStim")
 
 comport = COMPort()
 term_tab = Terminal(ui=ui, com=comport)
-chart_card = ChartCard(ui=ui)
+chart_card = ChartCard(ui=ui, port_send=comport.send)
+
+comport.register_callback(term_tab.parse_serial_line)
+comport.register_callback(chart_card.parse_serial_line)
+ui.timer(0.01, comport.read_serial, once=False)
 
 def dash_tab():
     with ui.card().style('background-color: #f0f0f0').classes('w-full h-full'):

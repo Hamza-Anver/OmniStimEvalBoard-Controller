@@ -32,6 +32,17 @@ class COMPort:
         """Send a line of text (with newline) over the serial port."""
         if self.serial and self.serial.is_open:
             self.serial.write((text + '\n').encode('utf-8'))
+            # call callbacks with the sent text
+            self._call_callbacks("SENT > " + text)
+
+    def _call_callbacks(self, data: str) -> None:
+        """
+        Invoke all registered callbacks with the given data.
+        This is a helper function to ensure that callbacks are called
+        in a thread-safe manner.
+        """
+        for cb in self.callbacks:
+            cb(data)
 
     def read_serial(self) -> None:
         """
@@ -42,8 +53,12 @@ class COMPort:
             try:
                 raw = self.serial.readline().decode('utf-8', errors='replace').strip()
                 if raw:
-                    for cb in self.callbacks:
-                        cb(raw)
+                    self._call_callbacks(raw)
+            except Exception:
+                pass
+        else:
+            try:
+                self._call_callbacks("DISCONNECTED")
             except Exception:
                 pass
 
