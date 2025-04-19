@@ -10,7 +10,6 @@ class Terminal:
     Handles all GUI elements for the serial terminal, using a COMPort instance
     for serial operations.
     """
-
     def __init__(self, ui: ui, com: COMPort):
         self.ui = ui
         self.com = com

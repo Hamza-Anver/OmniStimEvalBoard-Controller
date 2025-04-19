@@ -3,16 +3,16 @@ from nicegui import ui
 
 from app.terminal.comport import COMPort
 from app.terminal.terminalcard import Terminal
-from app.dashboard.adcchart import ChartCard
+from app.dashboard.dashboard import Dashboard
 
 ui.page_title("OmniStim")
 
 comport = COMPort()
 term_tab = Terminal(ui=ui, com=comport)
-chart_card = ChartCard(ui=ui, port_send=comport.send)
+dashboard_tab = Dashboard(ui=ui, serial_send=comport.send, register_serial_cb=comport.register_callback)
 
 comport.register_callback(term_tab.parse_serial_line)
-comport.register_callback(chart_card.parse_serial_line)
+
 ui.timer(0.01, comport.read_serial, once=False)
 
 def dash_tab():
@@ -30,7 +30,7 @@ with ui.header(elevated=True).style('background-color: #3874c8').classes('items-
 
 with ui.tab_panels(tabs, value=dashboard).classes('w-full h-full'):
     with ui.tab_panel(dashboard):
-        chart_card.set_ui()
+        dashboard_tab.set_ui()
     with ui.tab_panel(calculator):
         ui.label('Calculator content goes here.')
     with ui.tab_panel(terminal):

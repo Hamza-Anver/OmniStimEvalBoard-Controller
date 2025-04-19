@@ -56,7 +56,15 @@ class ChartCard:
             self.polling_interval_ms = self.ui_polling_interval.value
 
         # Schedule the next poll
-        self.ui.timer(self.polling_interval_ms / 1000, self.poll_data_loop, once=True)
+        try:
+            self.ui.timer(self.polling_interval_ms / 1000, self.poll_data_loop, once=True)
+        except Exception as e:
+            self.ui.notification(
+                f"Error scheduling polling: {e}",
+                color="red"
+            )
+            # Use one second as a fallback
+            self.ui.timer(1, self.poll_data_loop, once=True)
 
     def parse_serial_line(self, line: str):
         """
@@ -115,7 +123,7 @@ class ChartCard:
                 # Left pane: polling interval + min/max
                 with self.ui.column().classes("w-2/12"):
                     self.ui_polling_interval = self.ui.number(
-                        "Polling interval (ms)", value=1000, min=100, max=5000, step=100
+                        "Polling interval (ms)", value=1000, min=100, max=5000, step=100, validation="int"
                     ).classes("w-full")
 
                     self.data_params_table = self.ui.table(
