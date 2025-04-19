@@ -17,6 +17,7 @@ class Terminal:
         self.connect_button = None
         self.disconnect_button = None
         self.terminal_window = None
+        self.msg_input = None     # <-- new
 
         # Serial and port settings
         self.serial = None
@@ -30,7 +31,6 @@ class Terminal:
 
         # Start periodic tasks
         ui.timer(1.0, self._refresh_ports)
-        
         # Can be adjusted to a lower value for more frequent checks
         ui.timer(0.01, self._read_serial)
 
@@ -38,7 +38,6 @@ class Terminal:
         """Detect changes in COM ports and update selection options."""
         current = self._list_ports()
         if set(current) != set(self.port_options):
-            # update dropdown and notify
             self.port_select.options = current
             missing = set(self.port_options) - set(current)
             new = set(current) - set(self.port_options)
@@ -106,14 +105,21 @@ class Terminal:
         if self.terminal_window:
             self.terminal_window.set_text("\n".join(self.buffer[-self.max_buffer_size:]))
 
+    def _on_send_click(self) -> None:
+        """Handler for Send button."""
+        text = self.msg_input.value.strip()
+        if text:
+            self.send(text)
+            self.msg_input.set_value('')  # clear input
+
     def term_tab(self) -> None:
         """Render the terminal UI components in a tab or container."""
         with self.ui.row():
             # Port and baudrate selectors
             self.port_select = ui.select(label='Port', options=self._list_ports()).classes('w-64')
             self.baudrate_select = ui.select(label='Baudrate',
-                                            options=self.baudrate_options,
-                                            value=115200).classes('w-64')
+                                             options=self.baudrate_options,
+                                             value=115200).classes('w-64')
             # Connect/disconnect buttons
             self.connect_button = ui.button('Connect').classes('w-32').on_click(self.connect)
             self.disconnect_button = ui.button('Disconnect').classes('w-32').on_click(self.disconnect)
@@ -122,3 +128,8 @@ class Terminal:
         ui.label('Terminal Output').classes('text-lg font-bold')
         self.terminal_window = ui.label().classes('w-full h-64 overflow-auto bg-gray-100 p-2')
         self.terminal_window.style('white-space: pre-wrap; font-family: monospace;')
+
+        # New: Message input + Send button
+        with self.ui.row().classes('mt-2'):
+            self.msg_input = ui.input(placeholder='Type message...').classes('w-3/4')
+            ui.button('Send').classes('w-1/4').on_click(self._on_send_click)
