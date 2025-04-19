@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 from nicegui import ui
 
+from app.terminal.comport import COMPort
 from app.terminal.terminaltab import Terminal
+from app.dashboard.adcchart import ChartCard
 
 ui.page_title("OmniStim")
 
-term_tab = Terminal(ui=ui)
+comport = COMPort()
+term_tab = Terminal(ui=ui, com=comport)
+chart_card = ChartCard(ui=ui)
 
 def dash_tab():
     with ui.card().style('background-color: #f0f0f0').classes('w-full h-full'):
@@ -22,11 +26,11 @@ with ui.header(elevated=True).style('background-color: #3874c8').classes('items-
 
 with ui.tab_panels(tabs, value=dashboard).classes('w-full h-full'):
     with ui.tab_panel(dashboard):
-        ui.label('Dashboard content goes here.')
+        chart_card.chart_card()
     with ui.tab_panel(calculator):
         ui.label('Calculator content goes here.')
     with ui.tab_panel(terminal):
-        term_tab.term_tab()
+        term_tab.set_ui()
     with ui.tab_panel(info):
         ui.label('Info content goes here.')
 
