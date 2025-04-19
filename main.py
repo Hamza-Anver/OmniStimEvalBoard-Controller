@@ -2,7 +2,7 @@
 from nicegui import ui
 
 from app.terminal.comport import COMPort
-from app.terminal.terminaltab import Terminal
+from app.terminal.terminalcard import Terminal
 from app.dashboard.adcchart import ChartCard
 
 ui.page_title("OmniStim")
@@ -26,7 +26,7 @@ with ui.header(elevated=True).style('background-color: #3874c8').classes('items-
 
 with ui.tab_panels(tabs, value=dashboard).classes('w-full h-full'):
     with ui.tab_panel(dashboard):
-        chart_card.chart_card()
+        chart_card.set_ui()
     with ui.tab_panel(calculator):
         ui.label('Calculator content goes here.')
     with ui.tab_panel(terminal):

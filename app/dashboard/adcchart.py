@@ -104,9 +104,7 @@ class ChartCard:
             # Refresh the chart
             self.ui_chart.update()
 
-    def chart_card(self):
-        
-
+    def set_ui(self):
         # Outer card, full width
         with self.ui.card().classes('w-full flex flex-col overflow-hidden'):
             self.ui.label('ADC Chart').classes('text-xl font-bold')
