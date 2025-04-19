@@ -43,6 +43,9 @@ class Terminal:
         self.buffer: List[str] = []
         self.max_buffer_size: int = 1000
 
+        #callbacks
+        self.callbacks: List[callable] = []
+
         # Element ID for scrolling
         self.terminal_window_scroll_area = None
 
@@ -106,6 +109,12 @@ class Terminal:
                     self.buffer.append(line)
                     if len(self.buffer) > self.max_buffer_size:
                         self.buffer.pop(0)
+
+                    # Call all registered callbacks
+                    for callback in self.callbacks:
+                        callback(line)
+                        
+                    # Update the terminal display
                     self._update_terminal()
             except Exception as e:
                 ui.notification(f"Read error: {e}", color="red", duration=3)
@@ -122,6 +131,14 @@ class Terminal:
                 ui.notification(f"Send error: {e}", color="red", duration=3)
         else:
             ui.notification("Not connected", color="blue", duration=3)
+
+    def append_callback(self, callback: callable) -> None:
+        """
+        Append a callback function to the list of callbacks.
+        This function is called when new data is received from the serial port.
+        """
+        self.callbacks.append(callback)
+
 
     def _update_terminal(self) -> None:
         if self.terminal_window_scroll_area:
