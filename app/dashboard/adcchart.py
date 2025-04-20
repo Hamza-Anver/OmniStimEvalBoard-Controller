@@ -59,10 +59,7 @@ class ChartCard:
         try:
             self.ui.timer(self.polling_interval_ms / 1000, self.poll_data_loop, once=True)
         except Exception as e:
-            self.ui.notification(
-                f"Error scheduling polling: {e}",
-                color="red"
-            )
+            self.ui.notify(f"Error scheduling polling: {e}", type="negative", position="bottom-right")
             # Use one second as a fallback
             self.ui.timer(1, self.poll_data_loop, once=True)
 

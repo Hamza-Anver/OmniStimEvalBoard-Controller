@@ -99,15 +99,15 @@ class Terminal:
         if port:
             try:
                 self.com.connect(port, baud)
-                ui.notification(f"Connected to {port}", color="green", duration=3)
+                self.ui.notify("Connected", type="positive", position="bottom-right")
             except Exception as e:
-                ui.notification(f"Connection failed: {e}", color="red", duration=3)
+                self.ui.notify(f"Connection failed: {e}", type="negative", position="bottom-right")
         else:
-            ui.notification("Select a port first", color="blue", duration=3)
+            self.ui.notify("Select a port first", type="warning", position="bottom-right")
 
     def _disconnect(self):
         self.com.disconnect()
-        ui.notification("Disconnected", color="green", duration=3)
+        self.ui.notify("Disconnected", type="info", position="bottom-right")
 
     def _refresh_ports(self):
         if not self.port_select:
@@ -124,9 +124,9 @@ class Terminal:
         added = [p for p in current if p not in self.port_select.options]
         removed = [p for p in self.port_select.options if p not in current]
         if added:
-            ui.notification(f"Added ports: {', '.join(added)}", color="green", duration=3)
+            self.ui.notify(f"New ports: {', '.join(added)}", type="positive", position="bottom-right")
         if removed:
-            ui.notification(f"Removed ports: {', '.join(removed)}", color="red", duration=3)
+            self.ui.notify(f"Removed ports: {', '.join(removed)}", type="warning", position="bottom-right")
         
         self.port_select.options = current
         if self.port_select.value not in current:
@@ -169,7 +169,7 @@ class Terminal:
                     self.buffer.pop(0)
                 self._update_terminal()
             except Exception as e:
-                ui.notification(f"Send error: {e}", color="red", duration=3)
+                self.ui.notify(f"Send error: {e}", type="negative", position="bottom-right")
             self.msg_input.set_value("")
 
     def _clear_buffer(self):

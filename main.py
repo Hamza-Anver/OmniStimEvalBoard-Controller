@@ -15,10 +15,6 @@ comport.register_callback(term_tab.parse_serial_line)
 
 ui.timer(0.01, comport.read_serial, once=False)
 
-def dash_tab():
-    with ui.card().style('background-color: #f0f0f0').classes('w-full h-full'):
-        ui.label('Dashboard content goes here.')
-
 with ui.header(elevated=True).style('background-color: #3874c8').classes('items-center justify-between p-0'):
     ui.label('OmniStim Controller').classes('text-2xl text-white m-3')
     with ui.tabs().classes('m-0 p-0') as tabs:
