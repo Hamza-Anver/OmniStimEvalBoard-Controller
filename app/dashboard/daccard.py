@@ -15,4 +15,4 @@ class DACCard:
 
         with self.ui.row().classes('w-full flex'):
             self.ui.button('Set DAC').classes('grow').tooltip("Send DAC values over serial")
-            self.ui.button('Get APLL').classes('grow').tooltip("Gets current DAC values from serial")
+            self.ui.button('Get DAC').classes('grow').tooltip("Gets current DAC values from serial")

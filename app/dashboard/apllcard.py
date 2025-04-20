@@ -18,7 +18,7 @@ class APLLCard:
                 value = int(line.split(':')[1].strip())
                 self.inputs['apll'].set_value(value)
 
-                self.ui.notify(f"APLL value updated: {value}", type="info", position="bottom-right")
+                self.ui.notify(f"Got APLL value: {value}", type="info", position="bottom-right")
 
                 self._update_inputs()
 
@@ -32,8 +32,9 @@ class APLLCard:
         try:
             value = int(self.inputs['apll'].value)
             self.serial_send(f'SET APLL {value}')
-        except ValueError:
-            print("Invalid APLL value")
+            self.ui.notify(f"Setting APLL value: {value}", type="info", position="bottom-right")
+        except Exception as e:
+            self.ui.notify(f"Setting APLL Failed: {e}", type="negative", position="bottom-right")
 
     
 
