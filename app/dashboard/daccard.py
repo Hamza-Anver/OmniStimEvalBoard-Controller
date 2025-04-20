@@ -1,9 +1,9 @@
 from nicegui import ui
 import typing
 
-class APLLCard:
+class DACCard:
     def __init__(self, ui: ui):
         self.ui = ui
 
     def set_ui(self):
-        self.ui.label("APLL").classes("text-xl font-bold")
+        self.ui.label("DAC").classes("text-xl font-bold")

@@ -116,36 +116,34 @@ class ChartCard:
             self.ui_chart.update()
 
     def set_ui(self):
-        # Outer card, full width
-        with self.ui.card().classes("w-full flex flex-col overflow-hidden"):
-            self.card_title = self.ui.label("ADC Chart").classes("text-xl font-bold")
-            with self.ui.row().classes("w-full items-center"):
-                # Left pane: polling interval + min/max
-                with self.ui.column().classes("w-2/12"):
-                    self.ui_polling_interval = self.ui.number(
-                        "Polling interval (ms)", value=1000, min=100, max=5000, step=100, validation="int"
-                    ).classes("w-full")
+        self.ui.label("ADC Chart").classes("text-xl font-bold")
+        with self.ui.row().classes("w-full flex"):
+            # Left pane: polling interval + data
+            with self.ui.column().classes("w-fit"):
+                self.ui_polling_interval = self.ui.number(
+                    "Polling interval (ms)", value=1000, min=100, max=5000, step=100, validation="int"
+                ).classes("w-full")
 
-                    self.data_params_table = self.ui.table(
-                        rows=[
-                            {"param": "Min", "raw": "N/A"},
-                            {"param": "Max", "raw": "N/A"},
-                            {"param": "Avg (last 10)", "raw": "N/A"},
-                        ],
-                        columns=[
-                            {
-                                "label": "Parameter",
-                                "field": "param",
-                                "align": "left",
-                            },
-                            {
-                                "label": "Raw Value",
-                                "field": "raw",
-                                "align": "right",
-                            },
-                        ],
-                    ).classes("w-full")
+                self.data_params_table = self.ui.table(
+                    rows=[
+                        {"param": "Min", "raw": "N/A"},
+                        {"param": "Max", "raw": "N/A"},
+                        {"param": "Avg (last 10)", "raw": "N/A"},
+                    ],
+                    columns=[
+                        {
+                            "label": "Parameter",
+                            "field": "param",
+                            "align": "left",
+                        },
+                        {
+                            "label": "Raw Value",
+                            "field": "raw",
+                            "align": "right",
+                        },
+                    ],
+                ).classes("w-full")
 
-                # Right pane: dummy line chart
-                with self.ui.column().classes("grow"):
-                    self.ui_chart = self.ui.echart(self.chart_option).classes("w-full")
+            # Right pane: line chart
+            with self.ui.column().classes("grow border border-black rounded-md"):
+                self.ui_chart = self.ui.echart(self.chart_option)
